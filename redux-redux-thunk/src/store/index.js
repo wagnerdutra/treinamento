@@ -1,12 +1,14 @@
 import { createStore, compose, applyMiddleware } from "redux";
 
+import api from "../services/api";
+
 import reducers from "./ducks";
 
 import Reactotron from "../ReactotronConfig";
 
 import ReduxThunk from "redux-thunk";
 
-const middleware = [ReduxThunk];
+const middleware = [ReduxThunk.withExtraArgument(api)];
 
 middleware.push();
 

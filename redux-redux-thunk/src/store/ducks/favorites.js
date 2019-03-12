@@ -1,5 +1,3 @@
-import api from "../../services/api";
-
 /**
  * Types
  */
@@ -43,7 +41,7 @@ export default (state = INITIAL_STATE, action) => {
  */
 
 export const Creators = {
-  addFavoriteRequest: repository => dispatch => {
+  addFavoriteRequest: repository => (dispatch, _, api) => {
     dispatch({
       type: Types.ADD_REQUEST,
       payload: { repository }
