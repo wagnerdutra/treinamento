@@ -1,9 +1,18 @@
-import MapGL, { Marker } from 'react-map-gl';
-import React, { Component } from 'react';
-
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+import Mapa from '../../components/Mapa';
+import { Creators as UserActions } from '../../store/ducks/users';
+import { Creators as ModalActions } from '../../store/ducks/modal';
+import Modal from '../../components/Modal';
 
 class Map extends Component {
+  static propTypes = {
+    openModal: PropTypes.func.isRequired,
+    addUserRequest: PropTypes.func.isRequired,
+  };
+
   state = {
     viewport: {
       width: window.innerWidth,
@@ -12,11 +21,15 @@ class Map extends Component {
       longitude: -46.6065452,
       zoom: 14,
     },
+    lngLat: {
+      latitude: 0,
+      longiture: 0,
+    },
+    userName: '',
   };
 
   componentDidMount() {
     window.addEventListener('resize', this._resize);
-    this._resize();
   }
 
   componentWillUnmount() {
@@ -35,40 +48,48 @@ class Map extends Component {
   };
 
   handleMapClick = (e) => {
-    const [latitude, longitude] = e.lngLat;
+    const { openModal } = this.props;
+    openModal();
+    this.setState({ lngLat: e.lngLat });
+  };
 
-    alert(`Latitude: ${latitude} \nLongitude: ${longitude}`);
+  handleSubmit = () => {
+    const { addUserRequest } = this.props;
+    const { userName: name, lngLat } = this.state;
+    addUserRequest({
+      lngLat,
+      name,
+    });
   };
 
   render() {
-    const { viewport: mapViewport } = this.state;
+    const { viewport, userName } = this.state;
     return (
-      <MapGL
-        {...mapViewport}
-        onClick={this.handleMapClick}
-        mapStyle="mapbox://styles/mapbox/basic-v9"
-        mapboxApiAccessToken="pk.eyJ1IjoiZGllZ28zZyIsImEiOiJjamh0aHc4em0wZHdvM2tyc3hqbzNvanhrIn0.3HWnXHy_RCi35opzKo8sHQ"
-        onViewportChange={viewport => this.setState({ viewport })}
-      >
-        <Marker
-          latitude={-23.5439948}
-          longitude={-46.6065452}
-          onClick={this.handleMapClick}
-          captureClick
-        >
-          <img
-            style={{
-              borderRadius: 100,
-              width: 48,
-              height: 48,
-            }}
-            alt="map"
-            src="https://avatars2.githubusercontent.com/u/2254731?v=4"
-          />
-        </Marker>
-      </MapGL>
+      <Fragment>
+        <Modal width="300px" height="200px">
+          <form onSubmit={this.handleSubmit}>
+            <p>teste</p>
+            <input type="text" value={userName} onChange={e => this.setState({ userName: e.target.value })} />
+            <div>
+              <button type="submit" />
+            </div>
+          </form>
+        </Modal>
+        <Mapa {...viewport} handleClick={this.handleMapClick} onViewportChange={viewportT => this.setState({ viewport: viewportT })} />
+      </Fragment>
     );
   }
 }
 
-export default Map;
+const mapDispatchToProps = dispatch => bindActionCreators({ ...UserActions, ...ModalActions }, dispatch);
+
+const mapStateToProps = state => ({
+  users: state.users.data,
+  loading: state.users.loading,
+  error: state.users.error,
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Map);
