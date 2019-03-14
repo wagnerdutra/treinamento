@@ -6,18 +6,30 @@ import Mapa from '../../components/Mapa';
 import { Creators as UserActions } from '../../store/ducks/users';
 import { Creators as ModalActions } from '../../store/ducks/modal';
 import AddUser from '../../components/AddUser';
+import UserContainerList from '../../components/UserContainerList';
 
 class GithubUsers extends Component {
   static propTypes = {
     openModal: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     addUserRequest: PropTypes.func.isRequired,
     usersMap: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
         src: PropTypes.string.isRequired,
-        lngLat: PropTypes.array.isRequired,
-      }),
+        lngLat: PropTypes.array.isRequired
+      })
     ).isRequired,
+    users: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string,
+        login: PropTypes.string.isRequired,
+        avatar: PropTypes.string.isRequired
+      })
+    ).isRequired,
+    modalState: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired
   };
 
   state = {
@@ -26,13 +38,11 @@ class GithubUsers extends Component {
       height: window.innerHeight,
       latitude: -23.5439948,
       longitude: -46.6065452,
-      zoom: 14,
+      zoom: 14
     },
     lngLat: [],
-    userName: '',
+    userName: ''
   };
-
-  inputRef = React.createRef();
 
   componentDidMount() {
     window.addEventListener('resize', this._resize);
@@ -48,41 +58,55 @@ class GithubUsers extends Component {
       viewport: {
         ...viewport,
         width: window.innerWidth,
-        height: window.innerHeight,
-      },
+        height: window.innerHeight
+      }
     });
   };
 
-  handleMapClick = (e) => {
+  handleMapClick = e => {
     const { openModal } = this.props;
-    openModal();
     this.setState({ lngLat: e.lngLat });
-    const node = this.inputRef.current;
-    node.focus();
+    openModal();
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     const { addUserRequest } = this.props;
     const { userName: name, lngLat } = this.state;
-    addUserRequest({
-      lngLat,
-      name,
+
+    new Promise((resolve, reject) => {
+      addUserRequest({
+        lngLat,
+        name,
+        resolve,
+        reject
+      });
+    }).then(() => {
+      this.handleCancel();
     });
+  };
+
+  handleCancel = () => {
+    const { closeModal } = this.props;
+    closeModal();
     this.setState({ lngLat: [], userName: '' });
   };
 
   render() {
     const { viewport, userName } = this.state;
-    const { usersMap } = this.props;
+    const { usersMap, users, modalState, error } = this.props;
     return (
       <Fragment>
-        <AddUser
-          handleSubmit={this.handleSubmit}
-          userName={userName}
-          inputRef={this.inputRef}
-          onInputChange={e => this.setState({ userName: e.target.value })}
-        />
+        <UserContainerList users={users} />
+        {modalState && (
+          <AddUser
+            handleSubmit={this.handleSubmit}
+            userName={userName}
+            onInputChange={e => this.setState({ userName: e.target.value })}
+            handleCancel={this.handleCancel}
+            hadError={error}
+          />
+        )}
         <Mapa
           {...viewport}
           markers={usersMap}
@@ -94,15 +118,18 @@ class GithubUsers extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({ ...UserActions, ...ModalActions }, dispatch);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ ...UserActions, ...ModalActions }, dispatch);
 
 const mapStateToProps = state => ({
   usersMap: state.users.data.map(user => ({ id: user.id, src: user.avatar, lngLat: user.lngLat })),
   loading: state.users.loading,
   error: state.users.error,
+  modalState: state.modal,
+  users: state.users.data
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(GithubUsers);

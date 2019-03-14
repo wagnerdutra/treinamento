@@ -20,7 +20,6 @@ const GlobalStyle = createGlobalStyle`
   button {
     width: 90px;
     height: 30px;
-    margin-top: 10px;
     border: none;
     border-radius: 2px;
     color: white;

@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 
 import 'mapbox-gl/dist/mapbox-gl.css'; // eslint-disable-line
 
-const Mapa = ({
-  handleClick, onViewportChange, markers, ...rest
-}) => (
+const Mapa = ({ handleClick, onViewportChange, markers, ...rest }) => (
   <MapGL
     {...rest}
     onClick={handleClick}
@@ -15,12 +13,18 @@ const Mapa = ({
     onViewportChange={onViewportChange}
   >
     {markers.map(marker => (
-      <Marker key={marker.id} longitude={marker.lngLat[0]} latitude={marker.lngLat[1]} onClick={handleClick} captureClick>
+      <Marker
+        key={marker.id}
+        longitude={marker.lngLat[0]}
+        latitude={marker.lngLat[1]}
+        onClick={handleClick}
+        captureClick
+      >
         <img
           style={{
             borderRadius: 100,
             width: 48,
-            height: 48,
+            height: 48
           }}
           alt="map"
           src={marker.src}
@@ -37,13 +41,13 @@ Mapa.propTypes = {
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       src: PropTypes.string.isRequired,
-      lngLat: PropTypes.array.isRequired,
-    }),
-  ),
+      lngLat: PropTypes.array.isRequired
+    })
+  )
 };
 
 Mapa.defaultProps = {
-  markers: [],
+  markers: []
 };
 
 export default Mapa;

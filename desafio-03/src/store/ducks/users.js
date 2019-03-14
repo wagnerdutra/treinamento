@@ -1,13 +1,13 @@
 export const Types = {
   ADD_REQUEST: 'users/ADD_REQUEST_USER',
   ADD_SUCCESS: 'users/ADD_SUCCESS',
-  ADD_FAILURE: 'users/ADD_FAILURE',
+  ADD_FAILURE: 'users/ADD_FAILURE'
 };
 
 const INITIAL_STATE = {
   data: [],
   loading: false,
-  error: null,
+  error: false
 };
 
 export default function users(state = INITIAL_STATE, action) {
@@ -18,10 +18,10 @@ export default function users(state = INITIAL_STATE, action) {
       return {
         data: [...state.data, action.payload.data],
         loading: false,
-        error: null,
+        error: false
       };
     case Types.ADD_FAILURE:
-      return { ...state, loading: false, error: action.payload.error };
+      return { ...state, loading: false, error: !!action.payload.error };
     default:
       return state;
   }
@@ -30,14 +30,14 @@ export default function users(state = INITIAL_STATE, action) {
 export const Creators = {
   addUserRequest: user => ({
     type: Types.ADD_REQUEST,
-    payload: { ...user },
+    payload: { ...user }
   }),
   addUserSuccess: data => ({
     type: Types.ADD_SUCCESS,
-    payload: { data },
+    payload: { data }
   }),
   addUserFailure: error => ({
     type: Types.ADD_FAILURE,
-    payload: { error },
-  }),
+    payload: { error }
+  })
 };

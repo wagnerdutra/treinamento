@@ -1,32 +1,48 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../Modal';
 import Form from './styles';
 
-const AddUser = ({
-  handleSubmit, userName, inputRef, onInputChange,
-}) => (
-  <Modal>
-    <Form onSubmit={handleSubmit}>
-      <p>Adicionar novo usuário</p>
-      <input type="text" value={userName} ref={inputRef} onChange={onInputChange} />
-      <div>
-        <button type="button" className="secondary">
-          Cancelar
-        </button>
-        <button type="submit" className="success">
-          Salvar
-        </button>
-      </div>
-    </Form>
-  </Modal>
-);
+class AddUser extends Component {
+  inputRef = React.createRef();
+
+  componentDidMount() {
+    this.inputRef.current.focus();
+  }
+
+  render() {
+    const { handleSubmit, handleCancel, onInputChange, userName, hadError } = this.props;
+    return (
+      <Modal closeModal={handleCancel}>
+        <Form onSubmit={handleSubmit}>
+          <p>Adicionar novo usuário</p>
+          <input
+            type="text"
+            value={userName}
+            ref={this.inputRef}
+            onChange={onInputChange}
+            className={hadError ? 'error' : ''}
+          />
+          <div className="actions">
+            <button type="button" className="secondary" onClick={handleCancel}>
+              Cancelar
+            </button>
+            <button type="submit" className="success">
+              Salvar
+            </button>
+          </div>
+        </Form>
+      </Modal>
+    );
+  }
+}
 
 AddUser.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  handleCancel: PropTypes.func.isRequired,
   userName: PropTypes.string.isRequired,
-  inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.instanceOf(Element) })]).isRequired,
   onInputChange: PropTypes.func.isRequired,
+  hadError: PropTypes.bool.isRequired
 };
 
 export default AddUser;

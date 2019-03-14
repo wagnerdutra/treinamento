@@ -1,6 +1,6 @@
 export const Types = {
   OPEN: 'modal/OPEN',
-  CLOSE: 'modal/CLOSE',
+  CLOSE: 'modal/CLOSE'
 };
 
 const INITIAL_STATE = false;
@@ -19,10 +19,10 @@ export default function users(state = INITIAL_STATE, action) {
 export const Creators = {
   openModal: () => ({
     type: Types.OPEN,
-    payload: true,
+    payload: true
   }),
   closeModal: () => ({
     type: Types.CLOSE,
-    payload: false,
-  }),
+    payload: false
+  })
 };

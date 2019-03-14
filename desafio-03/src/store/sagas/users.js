@@ -2,7 +2,6 @@ import { call, put, select } from 'redux-saga/effects';
 import api from '../../services/api';
 
 import { Creators as UserActions } from '../ducks/users';
-import { Creators as ModalActions } from '../ducks/modal';
 
 export default function* addUser(action) {
   try {
@@ -17,14 +16,14 @@ export default function* addUser(action) {
         name: data.name,
         login: data.login,
         avatar: data.avatar_url,
-        lngLat: action.payload.lngLat,
+        lngLat: action.payload.lngLat
       };
 
       yield put(UserActions.addUserSuccess(userData));
+      action.payload.resolve();
     }
   } catch (err) {
     yield put(UserActions.addUserFailure('Erro ao adicionar usuário'));
-  } finally {
-    yield put(ModalActions.closeModal());
+    action.payload.reject();
   }
 }

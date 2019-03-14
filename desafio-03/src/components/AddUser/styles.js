@@ -18,15 +18,22 @@ const Form = styled.form`
     padding: 8px;
     color: gray;
     margin-top: 10px;
+
+    &.error {
+      border-color: red;
+    }
   }
 
-  button {
-    &:hover {
-      cursor: pointer;
-    }
+  .actions {
+    margin-top: 10px;
+    button {
+      &:hover {
+        cursor: pointer;
+      }
 
-    &:last-child {
-      margin-left: 10px;
+      &:last-child {
+        margin-left: 10px;
+      }
     }
   }
 `;
