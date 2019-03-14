@@ -16,7 +16,7 @@ export default function users(state = INITIAL_STATE, action) {
       return { ...state, loading: true };
     case Types.ADD_SUCCESS:
       return {
-        data: action.payload.data,
+        data: [...state.data, action.payload.data],
         loading: false,
         error: null,
       };
@@ -33,11 +33,11 @@ export const Creators = {
     payload: { ...user },
   }),
   addUserSuccess: data => ({
-    type: Types.ADD_REQUEST,
+    type: Types.ADD_SUCCESS,
     payload: { data },
   }),
   addUserFailure: error => ({
-    type: Types.ADD_REQUEST,
+    type: Types.ADD_FAILURE,
     payload: { error },
   }),
 };

@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 
 import 'mapbox-gl/dist/mapbox-gl.css'; // eslint-disable-line
 
-const Mapa = ({ handleClick, onViewportChange, ...rest }) => (
+const Mapa = ({
+  handleClick, onViewportChange, markers, ...rest
+}) => (
   <MapGL
     {...rest}
     onClick={handleClick}
@@ -12,23 +14,36 @@ const Mapa = ({ handleClick, onViewportChange, ...rest }) => (
     mapboxApiAccessToken="pk.eyJ1IjoiZGllZ28zZyIsImEiOiJjamh0aHc4em0wZHdvM2tyc3hqbzNvanhrIn0.3HWnXHy_RCi35opzKo8sHQ"
     onViewportChange={onViewportChange}
   >
-    <Marker latitude={-23.5439948} longitude={-46.6065452} onClick={handleClick} captureClick>
-      <img
-        style={{
-          borderRadius: 100,
-          width: 48,
-          height: 48,
-        }}
-        alt="map"
-        src="https://avatars2.githubusercontent.com/u/2254731?v=4"
-      />
-    </Marker>
+    {markers.map(marker => (
+      <Marker key={marker.id} longitude={marker.lngLat[0]} latitude={marker.lngLat[1]} onClick={handleClick} captureClick>
+        <img
+          style={{
+            borderRadius: 100,
+            width: 48,
+            height: 48,
+          }}
+          alt="map"
+          src={marker.src}
+        />
+      </Marker>
+    ))}
   </MapGL>
 );
 
 Mapa.propTypes = {
   handleClick: PropTypes.func.isRequired,
   onViewportChange: PropTypes.func.isRequired,
+  markers: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      src: PropTypes.string.isRequired,
+      lngLat: PropTypes.array.isRequired,
+    }),
+  ),
+};
+
+Mapa.defaultProps = {
+  markers: [],
 };
 
 export default Mapa;

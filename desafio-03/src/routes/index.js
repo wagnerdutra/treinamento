@@ -2,12 +2,12 @@ import React from 'react';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import Map from '../pages/Map';
+import GithubUsers from '../pages/GithubUsers';
 
 const Routes = () => (
   <Router>
     <Switch>
-      <Route exact path="/" component={Map} />
+      <Route exact path="/" component={GithubUsers} />
     </Switch>
   </Router>
 );

@@ -5,12 +5,19 @@ import PropTypes from 'prop-types';
 import Mapa from '../../components/Mapa';
 import { Creators as UserActions } from '../../store/ducks/users';
 import { Creators as ModalActions } from '../../store/ducks/modal';
-import Modal from '../../components/Modal';
+import AddUser from '../../components/AddUser';
 
-class Map extends Component {
+class GithubUsers extends Component {
   static propTypes = {
     openModal: PropTypes.func.isRequired,
     addUserRequest: PropTypes.func.isRequired,
+    usersMap: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        src: PropTypes.string.isRequired,
+        lngLat: PropTypes.array.isRequired,
+      }),
+    ).isRequired,
   };
 
   state = {
@@ -21,12 +28,11 @@ class Map extends Component {
       longitude: -46.6065452,
       zoom: 14,
     },
-    lngLat: {
-      latitude: 0,
-      longiture: 0,
-    },
+    lngLat: [],
     userName: '',
   };
+
+  inputRef = React.createRef();
 
   componentDidMount() {
     window.addEventListener('resize', this._resize);
@@ -51,31 +57,38 @@ class Map extends Component {
     const { openModal } = this.props;
     openModal();
     this.setState({ lngLat: e.lngLat });
+    const node = this.inputRef.current;
+    node.focus();
   };
 
-  handleSubmit = () => {
+  handleSubmit = (e) => {
+    e.preventDefault();
     const { addUserRequest } = this.props;
     const { userName: name, lngLat } = this.state;
     addUserRequest({
       lngLat,
       name,
     });
+    this.setState({ lngLat: [], userName: '' });
   };
 
   render() {
     const { viewport, userName } = this.state;
+    const { usersMap } = this.props;
     return (
       <Fragment>
-        <Modal width="300px" height="200px">
-          <form onSubmit={this.handleSubmit}>
-            <p>teste</p>
-            <input type="text" value={userName} onChange={e => this.setState({ userName: e.target.value })} />
-            <div>
-              <button type="submit" />
-            </div>
-          </form>
-        </Modal>
-        <Mapa {...viewport} handleClick={this.handleMapClick} onViewportChange={viewportT => this.setState({ viewport: viewportT })} />
+        <AddUser
+          handleSubmit={this.handleSubmit}
+          userName={userName}
+          inputRef={this.inputRef}
+          onInputChange={e => this.setState({ userName: e.target.value })}
+        />
+        <Mapa
+          {...viewport}
+          markers={usersMap}
+          handleClick={this.handleMapClick}
+          onViewportChange={viewportT => this.setState({ viewport: viewportT })}
+        />
       </Fragment>
     );
   }
@@ -84,7 +97,7 @@ class Map extends Component {
 const mapDispatchToProps = dispatch => bindActionCreators({ ...UserActions, ...ModalActions }, dispatch);
 
 const mapStateToProps = state => ({
-  users: state.users.data,
+  usersMap: state.users.data.map(user => ({ id: user.id, src: user.avatar, lngLat: user.lngLat })),
   loading: state.users.loading,
   error: state.users.error,
 });
@@ -92,4 +105,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Map);
+)(GithubUsers);

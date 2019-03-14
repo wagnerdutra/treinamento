@@ -14,8 +14,8 @@ export const Container = styled.div`
 `;
 
 export const Box = styled.div`
-  width: ${props => props.width};
-  height: ${props => props.height};
   opacity: 1;
   background-color: white;
+  padding: 10px;
+  border-radius: 2px;
 `;
