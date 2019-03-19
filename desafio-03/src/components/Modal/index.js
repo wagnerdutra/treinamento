@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import { Box, Container } from './styles';
 
@@ -13,13 +14,25 @@ class Modal extends Component {
   };
 
   render() {
-    const { width, height, children } = this.props;
+    const { width, height, children, showModal } = this.props;
     return (
-      <Container ref={this.containerRef} onClick={this.handleContainerClick}>
-        <Box width={width} height={height}>
-          {children}
-        </Box>
-      </Container>
+      <ReactCSSTransitionGroup
+        transitionName="example"
+        transitionEnterTimeout={500}
+        transitionLeaveTimeout={300}
+      >
+        {showModal && (
+          <Container
+            ref={this.containerRef}
+            onClick={this.handleContainerClick}
+            showModal={showModal}
+          >
+            <Box width={width} height={height}>
+              {children}
+            </Box>
+          </Container>
+        )}
+      </ReactCSSTransitionGroup>
     );
   }
 }
@@ -28,7 +41,8 @@ Modal.propTypes = {
   children: PropTypes.node.isRequired,
   width: PropTypes.string,
   height: PropTypes.string,
-  closeModal: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired,
+  showModal: PropTypes.bool.isRequired
 };
 
 Modal.defaultProps = {

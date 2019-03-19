@@ -44,6 +44,8 @@ class GithubUsers extends Component {
     userName: ''
   };
 
+  modalUserInput = React.createRef();
+
   componentDidMount() {
     window.addEventListener('resize', this._resize);
   }
@@ -67,6 +69,7 @@ class GithubUsers extends Component {
     const { openModal } = this.props;
     this.setState({ lngLat: e.lngLat });
     openModal();
+    this.modalUserInput.current.focus();
   };
 
   handleSubmit = e => {
@@ -98,15 +101,15 @@ class GithubUsers extends Component {
     return (
       <Fragment>
         <UserContainerList users={users} />
-        {modalState && (
-          <AddUser
-            handleSubmit={this.handleSubmit}
-            userName={userName}
-            onInputChange={e => this.setState({ userName: e.target.value })}
-            handleCancel={this.handleCancel}
-            hadError={error}
-          />
-        )}
+        <AddUser
+          ref={this.modalUserInput}
+          showModal={modalState}
+          handleSubmit={this.handleSubmit}
+          userName={userName}
+          onInputChange={e => this.setState({ userName: e.target.value })}
+          handleCancel={this.handleCancel}
+          hadError={error}
+        />
         <Mapa
           {...viewport}
           markers={usersMap}
