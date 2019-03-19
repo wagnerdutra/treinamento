@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Box, Container } from './styles';
@@ -14,11 +13,11 @@ class Modal extends Component {
   };
 
   render() {
-    const { width, height, modalState, ...rest } = this.props;
+    const { width, height, children } = this.props;
     return (
       <Container ref={this.containerRef} onClick={this.handleContainerClick}>
         <Box width={width} height={height}>
-          {rest.children}
+          {children}
         </Box>
       </Container>
     );
@@ -26,7 +25,7 @@ class Modal extends Component {
 }
 
 Modal.propTypes = {
-  modalState: PropTypes.bool.isRequired,
+  children: PropTypes.node.isRequired,
   width: PropTypes.string,
   height: PropTypes.string,
   closeModal: PropTypes.func.isRequired
@@ -37,8 +36,4 @@ Modal.defaultProps = {
   height: '200px'
 };
 
-const mapStateToProps = state => ({
-  modalState: state.modal
-});
-
-export default connect(mapStateToProps)(Modal);
+export default Modal;

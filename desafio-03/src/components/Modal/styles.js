@@ -10,7 +10,6 @@ export const Container = styled.div`
   align-items: center;
   flex-direction: row;
   justify-content: center;
-  transition: background-color 0.2s;
 `;
 
 export const Box = styled.div`
