@@ -46,7 +46,7 @@ export const Creators = {
       type: Types.ADD_REQUEST,
       payload: { repository }
     });
-    api
+    return api
       .get(`repos/${repository}`)
       .then(({ data }) => dispatch(Creators.addFavoriteSuccess(data)))
       .catch(error => dispatch(Creators.addFavoriteFailure("ERRO!")));
