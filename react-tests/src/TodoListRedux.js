@@ -1,40 +1,26 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Creators as TodosActions } from "./store/ducks/todos";
 
 export class TodoList extends Component {
   state = {
-    newTodo: "",
-    todos: []
+    newTodo: ""
   };
-
-  componentDidMount() {
-    const todos = localStorage.getItem("todos");
-
-    if (todos) {
-      this.setState({ todos: JSON.parse(todos) });
-    }
-  }
 
   handleInputChange = e => {
     this.setState({ newTodo: e.target.value });
   };
 
   handleAddTodo = () => {
-    this.setState(
-      {
-        todos: [...this.state.todos, this.state.newTodo],
-        newTodo: ""
-      },
-      () => {
-        localStorage.setItem("todos", JSON.stringify(this.state.todos));
-      }
-    );
+    this.props.addTodo(this.state.newTodo);
   };
 
   render() {
     return (
       <div>
         <ul>
-          {this.state.todos.map(todo => (
+          {this.props.todos.map(todo => (
             <li key={todo}>{todo}</li>
           ))}
         </ul>
@@ -42,7 +28,7 @@ export class TodoList extends Component {
           type="text"
           name="todo"
           onChange={this.handleInputChange}
-          value={this.state.newTodo}
+          value={this.props.newTodo}
         />
         <button onClick={this.handleAddTodo}>Adicionar Todo</button>
       </div>
@@ -50,4 +36,14 @@ export class TodoList extends Component {
   }
 }
 
-export default TodoList;
+const mapStateToProps = state => ({
+  todos: state.todos.data
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(TodosActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoList);
